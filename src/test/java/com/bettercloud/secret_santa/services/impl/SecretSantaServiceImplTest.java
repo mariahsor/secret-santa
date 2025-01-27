@@ -50,42 +50,31 @@ class SecretSantaServiceImplTest {
         when(participantRepository.findByEmail("john@example.com")).thenReturn(Optional.empty());
         when(participantRepository.findByEmail("jane@example.com")).thenReturn(Optional.empty());
 
-        // Se simula que al guardar el participante, se les asigna un ID en la BD
         when(participantRepository.save(any(Participant.class)))
                 .thenAnswer(invocation -> {
                     Participant participant = invocation.getArgument(0);
-                    // Suponiendo IDs autogenerados
                     participant.setId(participant.getEmail().equals("john@example.com") ? 1 : 2);
                     return participant;
                 });
 
-        // Simulamos que no hay repeticiones en los últimos 3 años
         when(logAssignmentRepository.countRecentAssignments(anyInt(), anyInt(), anyInt()))
                 .thenReturn(0);
 
-        // WHEN
         ApiResponseDTO response = secretSantaService.createAssignments(validParticipants, 2023);
 
-        // THEN
         assertNotNull(response);
         assertNotNull(response.getData());
-        //assertEquals("OK", response.getMeta().getMessage());
-        // Dependiendo de tu implementación, podrías chequear que el tamaño de la lista
-        // de assignments en response.getData() sea igual al número de participantes, etc.
 
-        // Verificar que se haya guardado la asignación en el repositorio
         verify(logAssignmentRepository, times(1)).saveAll(anyList());
     }
 
     @Test
     void createAssignments_OddNumberOfParticipants_ThrowsException() {
-        // GIVEN
-        // Lista con tamaño impar
+
         List<ParticipantRequestDTO> oddParticipants = List.of(
                 new ParticipantRequestDTO("John Doe", 1, "john@example.com")
         );
 
-        // WHEN - THEN
         AppSecretSantaException exception = assertThrows(
                 AppSecretSantaException.class,
                 () -> secretSantaService.createAssignments(oddParticipants, 2023)
@@ -97,10 +86,7 @@ class SecretSantaServiceImplTest {
 
     @Test
     void createAssignments_NoValidAssignment_ThrowsException() {
-        // GIVEN
-        // Para forzar que no haya un assignment válido, podemos simular que
-        // countRecentAssignments devuelva un valor > 0 para todos y no permita
-        // ninguna asignación.
+
         when(participantRepository.findByEmail(anyString())).thenReturn(Optional.empty());
         when(participantRepository.save(any(Participant.class)))
                 .thenAnswer(invocation -> {
@@ -109,12 +95,9 @@ class SecretSantaServiceImplTest {
                     return p;
                 });
 
-        // Suponiendo que la asignación está repetida para romper la lógica y
-        // que no se logre asignar nadie
         when(logAssignmentRepository.countRecentAssignments(anyInt(), anyInt(), anyInt()))
                 .thenReturn(1);
 
-        // WHEN - THEN
         AppSecretSantaException exception = assertThrows(
                 AppSecretSantaException.class,
                 () -> secretSantaService.createAssignments(validParticipants, 2023)

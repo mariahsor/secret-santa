@@ -1,6 +1,9 @@
 # Secret Santa
 
 This **Spring Boot** project manages the assignment of participants for a Secret Santa game. It includes the service layer, controllers, and entities required to generate and persist the assignments while applying specific constraints.
+### Live Application
+You can access the deployed application here:  
+[http://secret-santa4-env.eba-e37udnrv.us-east-1.elasticbeanstalk.com/](http://secret-santa4-env.eba-e37udnrv.us-east-1.elasticbeanstalk.com/)
 
 ## Assignment Restrictions
 
@@ -53,6 +56,18 @@ The following constraints are applied during the Secret Santa assignment process
 - **repositories**: Spring Data JPA repositories.
 - **util**
 - **test**: JUnit and Mockito tests.
+
+## Deployment with AWS Elastic Beanstalk and Amazon RDS
+
+The application has been deployed to **AWS Elastic Beanstalk**, with the database hosted on **Amazon RDS (PostgreSQL)**. This architecture ensures scalability, reliability, and the ability to handle multiple concurrent users.
+
+### Live Application
+You can access the deployed application here:  
+[http://secret-santa4-env.eba-e37udnrv.us-east-1.elasticbeanstalk.com/](http://secret-santa4-env.eba-e37udnrv.us-east-1.elasticbeanstalk.com/)
+
+- The combination of **Elastic Beanstalk's auto-scaling capabilities** and the **managed PostgreSQL database on RDS** ensures the application can support multiple concurrent users efficiently.
+- The load balancer distributes traffic evenly across the EC2 instances, preventing bottlenecks and improving response times.
+
 
 ## How to Build
 
